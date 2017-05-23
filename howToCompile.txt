@@ -1,0 +1,3 @@
+javac -d bin -cp lib/key.util.jar:lib/key.core.jar:lib/recoderKey.jar:lib/antlr.jar src/JavaExpressionReader.java
+
+java -cp bin/:lib/key.util.jar:lib/key.core.jar:lib/recoderKey.jar:lib/antlr.jar JavaExpressionReader

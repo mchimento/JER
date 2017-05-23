@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<result>
+  <contract Id="brew_ok" class="CMachine"
+ path="/home/chimento/Example/CoffeeBrew/"
+ target="main.CMachine" method="brew">
+    <oldExpr expr="cups + 1" type="int">
+    </oldExpr>
+
+  </contract>
+
+  <contract Id="setCups_ok" class="CMachine"
+ path="/home/chimento/Example/CoffeeBrew/"
+ target="main.CMachine" method="setCups">
+    <oldExpr expr="limit + y + foo.goo.goo()" type="">
+    </oldExpr>
+
+  </contract>
+
+  <contract Id="incX_ok" class="CMachine"
+ path="/home/chimento/Example/CoffeeBrew/"
+ target="main.CMachine" method="incX">
+    <oldExpr expr="x" type="">
+    </oldExpr>
+
+  </contract>
+
+  <contract Id="brew_error" class="CMachine"
+ path="/home/chimento/Example/CoffeeBrew/"
+ target="main.CMachine" method="brew">
+    <oldExpr expr="cups" type="int">
+    </oldExpr>
+
+  </contract>
+
+  <contract Id="clean_filter_error" class="CMachine"
+ path="/home/chimento/Example/CoffeeBrew/"
+ target="main.CMachine" method="cleanF">
+    <oldExpr expr="cups" type="int">
+    </oldExpr>
+
+  </contract>
+
+</result>
