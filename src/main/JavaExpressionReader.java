@@ -29,6 +29,7 @@ import de.uka.ilkd.key.proof.init.ProblemInitializer;
 import de.uka.ilkd.key.proof.init.ProofInputException;
 import de.uka.ilkd.key.proof.io.AbstractEnvInput;
 import de.uka.ilkd.key.speclang.PositionedString;
+
 import xml.*;
 
 public class JavaExpressionReader {
@@ -40,6 +41,8 @@ public class JavaExpressionReader {
     private final String classContext;
 
     private final String methodContext;
+    
+    private static String workingDirectory ;
     
     /**
      * creates an expression reader
@@ -145,51 +148,14 @@ public class JavaExpressionReader {
      	address[0] = "/home/chimento/repos/JER/example/tmp.xml";
      	address[1] = "/home/chimento/Example/out/";
      	
+     	workingDirectory = System.getProperty("user.dir");
+     	
     	try {
     		run(address);
          }
          catch (Exception e) {
             e.printStackTrace();
-         }    	        
-    	    	
-    	String workingDirectory = System.getProperty("user.dir");
-    	
-        JavaExpressionReader jer = new JavaExpressionReader("/home/chimento/repos/JER/example/src/", 
-                new LinkedList<File>(), new File(workingDirectory + "/jre"), "main.CMachine", "setCups");
-        
-        try {
-            System.out.println("Expression Type: " + jer.getKeYJavaTypeForExpression("limit + foo.goo.goo()").getJavaType().getFullName());
-        } catch (ProofInputException pie) {
-            System.out.println(pie.line + ":" + pie.charPositionInLine);
-            throw pie;
-        } catch (RuntimeException e) {        	
-        	System.out.println(e.toString());        	
-        }
-       
-        jer = new JavaExpressionReader("/home/chimento/repos/JER/example/src/", 
-                new LinkedList<File>(), new File(workingDirectory + "/jre"), "main.CMachine", "setCups");
-        
-        try {
-            System.out.println("Expression Type: " + jer.getKeYJavaTypeForExpression("foo.goo").getJavaType().getFullName());
-        } catch (ProofInputException pie) {
-            System.out.println(pie.line + ":" + pie.charPositionInLine);
-            throw pie;
-        }
-       /*  
-        jer = new JavaExpressionReader("/home/chimento/repos/JER/example/src/", 
-                new LinkedList<File>(), new File("./jre"), "main.CMachine", "setCups");
-                
-        try {
-            System.out.println("Expression Type: " + jer.getKeYJavaTypeForExpression("limit + y").getJavaType().getFullName());
-        } catch (ProofInputException pie) {
-            System.out.println(pie.line + ":" + pie.charPositionInLine);
-            throw pie;
-        } catch (ConvertException e) {
-        	System.out.println("An error has occur while infering a type: ");
-        	//e.printStackTrace();
-        	System.out.println(e.getCause());
-        }
-        */
+         }
     }    
     
     public static void run(String[] args) throws Exception { 
@@ -224,14 +190,12 @@ public class JavaExpressionReader {
     
     public static void inferTypes(OldExpr oexpr,String path) throws Exception {    	
     	JavaExpressionReader jer = new JavaExpressionReader(oexpr.getPath(), 
-                //new LinkedList<File>(), new File(oexpr.getPath()), oexpr.getTarget(), oexpr.getMethodName());    	
-    			new LinkedList<File>(), new File("./jre"), oexpr.getTarget(), oexpr.getMethodName());
+    			new LinkedList<File>(), new File(workingDirectory + "/jre"), oexpr.getTarget(), oexpr.getMethodName());
     	String type = null;
     	
         	for (OExpr oe : oexpr.getOexprs()) {
         		if (oe.getType().equals("")){
-        			System.out.println("Checking type of expression: " + oe.getExpr());
-        			
+        			System.out.println("Checking type of expression: " + oe.getExpr());        			
         			try {
         			     type = jer.getKeYJavaTypeForExpression(oe.getExpr()).getJavaType().getFullName();
         			     String[] aux = type.split("\\.");
@@ -243,7 +207,7 @@ public class JavaExpressionReader {
         	        	;	
         	        } 
        	            if (type==null)
-       	               oe.setType("Type inference failure.");       	            
+       	               oe.setType("Type_inference_failure.");       	            
         		} 	            
    	         }            
     }
