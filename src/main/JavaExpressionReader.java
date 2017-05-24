@@ -43,7 +43,7 @@ public class JavaExpressionReader {
     private final String methodContext;
     
     private static String workingDirectory ;
-    
+        
     /**
      * creates an expression reader
      * @param javaPath path to the Java source classes 
@@ -144,14 +144,16 @@ public class JavaExpressionReader {
 
     
     public static void main(String[] args) throws ProofInputException {
-    	String[] address = new String[2];    	
-     	address[0] = "/home/chimento/repos/JER/example/tmp.xml";
-     	address[1] = "/home/chimento/Example/out/";
      	
+    	/* String[] address = new String[2];    	
+           address[0] = "/home/chimento/repos/JER/example/tmp.xml";
+           address[1] = "/home/chimento/Example/out/";
+    	 */
+    	
      	workingDirectory = System.getProperty("user.dir");
      	
     	try {
-    		run(address);
+    		run(args);
          }
          catch (Exception e) {
             e.printStackTrace();
@@ -159,22 +161,43 @@ public class JavaExpressionReader {
     }    
     
     public static void run(String[] args) throws Exception { 
-    	if (args.length == 2) {
-    		String arg = args[0];
+    	if (args.length <= 3) {
+    		String arg;
+            String flag;
+            String path;
+            String bootClassPath = workingDirectory + "/jre";
+            String files;
+            
+            if (args.length == 3) {
+            	if (args[0].equals("-v")) {
+            	   flag = args[0];
+                   arg = args[1];
+                   path = args[2];
+                   files = path+"/workspace/files/";
+            	} else {            	
+                       throw new RuntimeException("Wrong parameters used.");            		
+            	}
+            } else {                     	
+            	flag = null;
+            	arg = args[0];
+            	path = args[1];
+                files = path+"/workspace/files/";
+            }
+            
             File file = new File(arg);
             
             File resultFile;
             if (arg.charAt(arg.length()-1) == '/') {               
-                resultFile = new File(args[1] + "tmp2.xml");                  
+                resultFile = new File(path + "tmp2.xml");                  
              } else {
-                resultFile = new File(args[1] + "/tmp2.xml");
+                resultFile = new File(path + "/tmp2.xml");
              }
             
             if (file.exists()) {
                Result result = Reader.load(file);
                try {
                	for (OldExpr old : result.getOldExpr()) {               	   
-          	       inferTypes(old,args[1]+"/workspace/files/");          	       
+          	       inferTypes(old,files,flag,bootClassPath);          	       
           	    }            
                } catch (ProofInputException pie) {
                    System.out.println(pie.line + ":" + pie.charPositionInLine);
@@ -188,14 +211,15 @@ public class JavaExpressionReader {
         }
     }
     
-    public static void inferTypes(OldExpr oexpr,String path) throws Exception {    	
+    public static void inferTypes(OldExpr oexpr,String path,String flag, String bootClassPath) throws Exception {    	
     	JavaExpressionReader jer = new JavaExpressionReader(oexpr.getPath(), 
-    			new LinkedList<File>(), new File(workingDirectory + "/jre"), oexpr.getTarget(), oexpr.getMethodName());
+    			new LinkedList<File>(), new File(bootClassPath), oexpr.getTarget(), oexpr.getMethodName());
     	String type = null;
     	
         	for (OExpr oe : oexpr.getOexprs()) {
         		if (oe.getType().equals("")){
-        			System.out.println("Checking type of expression: " + oe.getExpr());        			
+        			if (flag != null)
+              			System.out.println("Checking type of expression: " + oe.getExpr());        			
         			try {
         			     type = jer.getKeYJavaTypeForExpression(oe.getExpr()).getJavaType().getFullName();
         			     String[] aux = type.split("\\.");

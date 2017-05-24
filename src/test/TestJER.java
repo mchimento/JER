@@ -2,12 +2,12 @@ package test;
 
 import java.io.File;
 import java.util.LinkedList;
-
-import de.uka.ilkd.key.proof.init.ProofInputException;
 import main.JavaExpressionReader;
+import de.uka.ilkd.key.proof.init.ProofInputException;
+
 
 public class TestJER {
-
+ 	
 	public static void test() throws ProofInputException {
 		
 		JavaExpressionReader jer = new JavaExpressionReader("/home/chimento/repos/JER/example/src/", 
@@ -21,7 +21,7 @@ public class TestJER {
         } catch (RuntimeException e) {        	
         	System.out.println(e.toString());        	
         }
-       
+               
         jer = new JavaExpressionReader("/home/chimento/repos/JER/example/src/", 
                 new LinkedList<File>(), new File("../jre"), "main.CMachine", "setCups");
         
@@ -40,6 +40,6 @@ public class TestJER {
 	}
 	
     public static void main(String[] args) throws ProofInputException {    	
-    	test();
+    	test();    	
     }
 }
