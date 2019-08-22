@@ -148,9 +148,7 @@ public class JavaExpressionReader {
     	/* String[] address = new String[2];    	
            address[0] = "/home/chimento/repos/JER/example/tmp.xml";
            address[1] = "/home/chimento/Example/out/";
-    	 */
-    	
-     	workingDirectory = System.getProperty("user.dir");
+    	 */    	     	
      	
     	try {
     		run(args);
@@ -161,19 +159,20 @@ public class JavaExpressionReader {
     }    
     
     public static void run(String[] args) throws Exception { 
-    	if (args.length <= 3) {
+    	if (args.length <= 4) {   		
     		String arg;
             String flag;
             String path;
-            String bootClassPath = workingDirectory + "/jre";
+            String bootClassPath = "";
             String files;
             
-            if (args.length == 3) {
+            if (args.length == 4) {
             	if (args[0].equals("-v")) {
             	   flag = args[0];
                    arg = args[1];
                    path = args[2];
-                   files = path+"/workspace/files/";
+                   workingDirectory = args[3];
+                   bootClassPath = workingDirectory + "/jre";
             	} else {            	
                        throw new RuntimeException("Wrong parameters used.");            		
             	}
@@ -181,7 +180,8 @@ public class JavaExpressionReader {
             	flag = null;
             	arg = args[0];
             	path = args[1];
-                files = path+"/workspace/files/";
+            	workingDirectory = args[2];
+                bootClassPath = workingDirectory + "/jre";
             }
             
             File file = new File(arg);
@@ -197,7 +197,7 @@ public class JavaExpressionReader {
                Result result = Reader.load(file);
                try {
                	for (OldExpr old : result.getOldExpr()) {               	   
-          	       inferTypes(old,files,flag,bootClassPath);          	       
+          	       inferTypes(old,flag,bootClassPath);          	       
           	    }            
                } catch (ProofInputException pie) {
                    System.out.println(pie.line + ":" + pie.charPositionInLine);
@@ -211,7 +211,7 @@ public class JavaExpressionReader {
         }
     }
     
-    public static void inferTypes(OldExpr oexpr,String path,String flag, String bootClassPath) throws Exception {    	
+    public static void inferTypes(OldExpr oexpr,String flag, String bootClassPath) throws Exception {    	
     	JavaExpressionReader jer = new JavaExpressionReader(oexpr.getPath(), 
     			new LinkedList<File>(), new File(bootClassPath), oexpr.getTarget(), oexpr.getMethodName());
     	String type = null;
@@ -224,14 +224,19 @@ public class JavaExpressionReader {
         			     type = jer.getKeYJavaTypeForExpression(oe.getExpr()).getJavaType().getFullName();
         			     String[] aux = type.split("\\.");
         			     oe.setType(aux[aux.length-1]);
+        			     if (flag != null) 
+        			        System.out.println("The type is: " + oe.getType().toString());
         			} catch (ProofInputException pie) {
         	            System.out.println(pie.line + ":" + pie.charPositionInLine);
         	            throw pie;
         	        } catch (RuntimeException e) {
-        	        	;	
+        	        	;
         	        } 
-       	            if (type==null)
-       	               oe.setType("Type_inference_failure.");       	            
+       	            if (type==null && oe.getType().toString().equals("")) {     	               
+       	               oe.setType("Type_inference_failure.");       	 
+       	               if (flag != null)
+       	                  System.out.println("Type inference failure.");
+       	            }
         		} 	            
    	         }            
     }
