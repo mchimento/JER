@@ -1,2 +1,2 @@
 # JER
-API used to infer the type of expressions in a Java program
+API used by the StaRVOrS tool to infer the type of expressions in a Java program.
